@@ -1,17 +1,17 @@
 # Python_flask
 
 
-## bash Commands
+## Bash Commands
 
 Running program
-bash ```
+```bash
     export FLASK_APP=filename.py
     flask run
 ```
 Above command will not implement every changes, to do so you need to run this command after every changes to see change.
 Alternative way to do so is 
 
-bash ```
+```bash
     export FLASK_DEBUG=1
     flask run
 ```
@@ -21,12 +21,12 @@ One more way
 
 This should be in py file
 
-python```
+```python
     if __name__ == "__main__":
         name.run(debug=True)
 ```
 and command is 
 
-bash```
+```bash
     python filename.py
 ```
