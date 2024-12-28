@@ -9,13 +9,15 @@ post = [
         "author": "Abhay",
         "title": "Blog Post 1",
         "content": "First Post Content",
-        "date_posted": "December 27, 2024"
+        "date_posted": "December 27, 2024",
+        "desc": "Hello how are you are all",
     },
     {
         "author": "Nikhil",
         "title": "Blog Post 2",
         "content": "Second Post Content",
-        "date_posted": "December 28, 2024"
+        "date_posted": "December 28, 2024",
+        "desc": "Hi, there hope you are all fine",
     }
 ]
 
