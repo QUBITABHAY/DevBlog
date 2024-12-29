@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+    <div>
+        <form method = "POST" action = "">
+            {{ form.hidden_tag() }}
+            <fieldset>
+                <legend>
+                    Join Today
+                </legend>
+                <div>
+                    {{ form.username.label(class="label") }}
+                    {{ form.username(class="form") }}
+                </div>
+
+                <div>
+                    {{ form.email.label(class="label") }}
+                    {{ form.email(class="form") }}
+                </div>
+
+                <div>
+                    {{ form.password.label(class="label") }}
+                    {{ form.password(class="form") }}
+                </div>
+
+                <div>
+                    {{ form.confirm_password.label(class="label") }}
+                    {{ form.confirm_password(class="form") }}
+                </div>
+            </fieldset>
+            <div>
+                {{ form.submit(class="btn") }}
+            </div>
+        </form>
+    </div>
+    <div>
+        <small>
+            Already Have An Account?  <a href="{{ url_for("login") }}">Sign In</a>
+        </small>
+    </div>
+  
+{% endblock content %}
