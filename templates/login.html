@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+    <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="space-y-6">
+                <legend class="text-2xl font-semibold text-center">Login</legend>
+                
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
+                    {% if form.email.errors %}
+                        <div class="mt-1">
+                            {{ form.email(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
+                        </div>
+                        <div class="mt-2 text-sm text-red-600">
+                            {% for error in form.email.errors %}
+                                <p class="text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="mt-1">
+                            {{ form.email(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">{{ form.password.label }}</label>
+                    {% if form.password.errors %}
+                        <div class="mt-1">
+                            {{ form.password(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
+                        </div>
+                        <div class="mt-2 text-sm text-red-600">
+                            {% for error in form.password.errors %}
+                                <p class="text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="mt-1">
+                            {{ form.password(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="remember" class="ml-2 block text-sm text-gray-600">{{ form.remember.label }}</label>
+                </div>
+
+            </fieldset>
+
+            <div class="mt-6">
+                <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    {{ form.submit() }}
+                </button>
+            </div>
+
+            <div class="mt-4 text-center">
+                <small class="text-sm text-gray-600">
+                    <a href="#" class="text-blue-600 hover:underline">Forgot Password?</a>
+                </small>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-6 text-center">
+        <small class="text-gray-600">
+            Need an account? <a href="{{ url_for('register') }}" class="text-blue-600 hover:underline">Sign Up Now</a>
+        </small>
+    </div>
+  
+{% endblock content %}
