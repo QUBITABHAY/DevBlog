@@ -1,13 +1,10 @@
-from basic_flask.models import User, Post
-from flask import flash, redirect
-from flask import render_template as e
-from flask import url_for 
+from flask import flash, redirect, render_template, url_for
 from basic_flask.forms import RegistrationForm, LoginForm
-from basic_flask import app
+from basic_flask import app, db, bcrypt
+from basic_flask.models import User, Post
 
-        
-# Adding Dummy Data
-post = [
+# Dummy data remains the same for demonstration
+posts = [
     {
         "author": "Abhay",
         "title": "Blog Post 1",
@@ -100,36 +97,38 @@ post = [
     }
 ]
 
-# Making Home Page 
-
 @app.route("/")
 @app.route("/home")
 def home():
-    return e("home.html", post = post)
-
-# Making About Page
+    return render_template("home.html", post=posts)
 
 @app.route("/about")
 def about():
-    return e("about.html", title = "About")
+    return render_template("about.html", title="About")
 
-
-@app.route("/register", methods = ["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f"Account created for {form.username.data}!", "success")
-        return redirect(url_for("home"))
-    return e("register.html", title = "Register", form = form)
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password
+        )
+        new_user.save()
+        flash("Your account has been created! You can now log in", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Register", form=form)
 
-
-@app.route("/login", methods = ["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == "admin@blog.com" and form.password.data == "1234567":
-            flash(f"You have been looged in!", "success")
+        user = db.users.find_one({"email": form.email.data})
+        if user and bcrypt.check_password_hash(user["password"], form.password.data):
+            flash("Login successful!", "success")
             return redirect(url_for("home"))
         else:
-            flash("Login Unsuccessful. Please check Username and Password", "error")
-    return e("login.html", title = "Login", form = form)
+            flash("Login unsuccessful. Please check email and password", "danger")
+    return render_template("login.html", title="Login", form=form)
