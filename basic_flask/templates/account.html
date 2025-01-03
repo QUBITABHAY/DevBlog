@@ -1,6 +1,77 @@
 {% extends "layout.html" %}
 {% block content %}
+    <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+            <!-- Profile Card -->
+            <div class="bg-white rounded-xl shadow-2xl p-8 mb-12">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
+                    <div class="relative group">
+                        <img class="h-12 max-h-2 max-w-2 rounded-full object-cover border-4 border-indigo-100 hover:border-indigo-400 transition-all duration-300 transform hover:scale-105" 
+                            src="{{ image_file }}" 
+                            alt="Profile Picture">
+                    </div>
+                    <div class="md:text-left space-y-4">
+                        <h1 class="text-3xl font-semibold text-gray-900">{{ current_user.username }}</h1>
+                        <p class="text-lg text-gray-600">{{ current_user.email }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <h1>{{ current_user.username }}</h1>
-
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+            <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="space-y-6">
+                        <legend class="text-2xl font-semibold text-center">Account Info</legend>
+                        
+                        <!-- Username Field -->
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700">{{ form.username.label }}</label>
+                            {% if form.username.errors %}
+                                <div class="mt-1">
+                                    {{ form.username(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
+                                </div>
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.username.errors %}
+                                        <p class="text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="mt-1">
+                                    {{ form.username(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
+                                </div>
+                            {% endif %}
+                        </div>
+        
+                        <!-- Email Field -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
+                            {% if form.email.errors %}
+                                <div class="mt-1">
+                                    {{ form.email(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
+                                </div>
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.email.errors %}
+                                        <p class="text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="mt-1">
+                                    {{ form.email(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </fieldset>
+        
+                    <div class="mt-6">
+                        <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            {{ form.submit() }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 {% endblock content %}

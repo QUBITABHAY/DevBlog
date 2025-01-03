@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["templates/layout.html",
-    "templates/about.html",
-    "templates/home.html",
-    "templates/register.html",
-    "templates/login.html"
+  content: ["basic_flask/templates/layout.html",
+    "basic_flask/templates/about.html",
+    "basic_flask/templates/home.html",
+    "basic_flask/templates/register.html",
+    "basic_flask/templates/login.html",
+    "basic_flask/templates/account.html"
   ],
   theme: {
     extend: {},
