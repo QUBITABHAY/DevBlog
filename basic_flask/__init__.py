@@ -4,6 +4,7 @@ from pymongo.server_api import ServerApi
 from flask_bcrypt import Bcrypt
 import os
 from dotenv import load_dotenv
+from flask_login import LoginManager
 
 load_dotenv()
 
@@ -19,5 +20,8 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "5ae1861867c107ac09ba2d30d107
 # Initialize MongoDB and other extensions
 db = mongo_client["flask_db"]
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+login_manager.login_message_category = "error"
 
 from basic_flask import routes
