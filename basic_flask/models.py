@@ -23,14 +23,13 @@ class User(UserMixin):
         db.users.create_index([("email", 1)], unique=True)
         
         user_data = {
-            "_id": self.id,
             "username": self.username,
             "email": self.email,
             "password": self.password,
             "image_file": self.image_file
         }
-        db.users.insert_one(user_data)
-
+        result = db.users.insert_one(user_data)
+        self.id = str(result.inserted_id)
 @login_manager.user_loader
 def load_user(user_id):
     if not user_id:
