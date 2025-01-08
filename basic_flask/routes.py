@@ -2,109 +2,17 @@ import secrets
 from PIL import Image
 import os
 from flask import flash, redirect, render_template, url_for, request
-from basic_flask.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from basic_flask.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from basic_flask import app, db, bcrypt
 from basic_flask.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from bson import ObjectId
 
-# Dummy data remains the same for demonstration
-posts = [
-    {
-        "author": "Abhay",
-        "title": "Blog Post 1",
-        "content": "First Post Content",
-        "date_posted": "December 27, 2024",
-        "desc": "Hello how are you all",
-        "category": "Programming",
-        "tags": ["Python", "Web Development", "Flask"]
-    },
-    {
-        "author": "Nikhil",
-        "title": "Blog Post 2",
-        "content": "Second Post Content",
-        "date_posted": "December 28, 2024",
-        "desc": "Hi, there hope you are all fine",
-        "category": "Programming",
-        "tags": ["Python", "Web Development", "Flask"]
-    },
-    {
-        "author": "Vishal",
-        "title": "Blog Post 3",
-        "content": "Third Post Content",
-        "date_posted": "December 28, 2024",
-        "desc": "Good day, how are you all",
-        "category": "Programming",
-        "tags": ["Python", "Web Development", "Flask"]
-    },
-    {
-        "author": "John Smith",
-        "title": "Getting Started with Flask",
-        "content": "Flask is a lightweight WSGI web application framework in Python. It's designed to get started quickly and scale up to complex applications.",
-        "date_posted": "January 15, 2024",
-        "desc": "Learn the basics of Flask framework and build your first web application",
-        "category": "Programming",
-        "tags": ["Python", "Web Development", "Flask"]
-    },
-    {
-        "author": "Emma Wilson",
-        "title": "Python Best Practices",
-        "content": "Understanding Python best practices is crucial for writing clean, maintainable code. Let's explore key principles and patterns.",
-        "date_posted": "January 16, 2024",
-        "desc": "Essential tips for writing better Python code",
-        "category": "Development",
-        "tags": ["Python", "Clean Code", "Best Practices"]
-    },
-    {
-        "author": "Michael Chen",
-        "title": "Web Security Fundamentals",
-        "content": "Security is paramount in web development. This post covers essential security practices for modern web applications.",
-        "date_posted": "January 17, 2024",
-        "desc": "Learn about crucial web security concepts and implementations",
-        "category": "Security",
-        "tags": ["Security", "Web Development", "Best Practices"]
-    },
-    {
-        "author": "Sarah Johnson",
-        "title": "Database Design Patterns",
-        "content": "Effective database design is crucial for application performance. Explore common patterns and anti-patterns.",
-        "date_posted": "January 18, 2024",
-        "desc": "Master database design patterns for better applications",
-        "category": "Database",
-        "tags": ["Database", "Design Patterns", "Architecture"]
-    },
-    {
-        "author": "James Brown",
-        "title": "Advanced JavaScript Concepts",
-        "content": "Deep dive into advanced JavaScript concepts such as closures, promises, and asynchronous programming.",
-        "date_posted": "January 20, 2024",
-        "desc": "Master complex JavaScript concepts for better web development",
-        "category": "Programming",
-        "tags": ["JavaScript", "Web Development", "Asynchronous"]
-    },
-    {
-        "author": "Olivia Green",
-        "title": "Building RESTful APIs with Flask",
-        "content": "In this post, we explore how to build RESTful APIs with Flask, including methods like GET, POST, PUT, and DELETE.",
-        "date_posted": "January 22, 2024",
-        "desc": "Learn how to create RESTful APIs with Flask and Python",
-        "category": "Programming",
-        "tags": ["Flask", "API", "RESTful"]
-    },
-    {
-        "author": "David Lee",
-        "title": "Mastering SQL Queries",
-        "content": "SQL is the backbone of many applications. This post explores key SQL query techniques to improve your database interactions.",
-        "date_posted": "January 25, 2024",
-        "desc": "Learn how to write complex SQL queries efficiently",
-        "category": "Database",
-        "tags": ["SQL", "Database", "Queries"]
-    }
-]
 
 @app.route("/")
 @app.route("/home")
 def home():
+    posts = db.posts.find()
     return render_template("home.html", post=posts)
 
 @app.route("/about")
@@ -185,3 +93,70 @@ def account():
         form.email.data = current_user.email
     image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
     return render_template("account.html", title = "Account", image_file=image_file, form=form)
+
+
+@app.route("/post/new", methods=["GET", "POST"])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
+        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
+        post_data = {
+            "_id": post._id,
+            "title": post.title,
+            "content": post.content,
+            "user_id": post.user_id,
+            "author": current_user.username,
+            "category": form.category.data,
+            "tags": tags,
+            "date_posted": post.date_posted
+        }
+        db.posts.insert_one(post_data)
+        flash("Your post has been created!", "success")
+        return redirect(url_for("home"))
+    return render_template("create_post.html", title="New Post", form=form, legend="New Post")
+
+@app.route("/post/<post_id>")
+def post(post_id):
+    try:
+        post = db.posts.find_one({"_id": ObjectId(post_id)})
+        if post:
+            return render_template("post.html", title=post["title"], post=post)
+        else:
+            flash("Post not found!", "error")
+            return redirect(url_for("home"))
+    except:
+        flash("Invalid post ID!", "error")
+        return redirect(url_for("home"))
+    
+@app.route("/post/<post_id>/update", methods=["GET", "POST"])
+@login_required
+def update_post(post_id):
+    try:
+        post = db.posts.find_one({"_id": ObjectId(post_id)})
+        if post:
+            if post["user_id"] != current_user.id:
+                flash("You are not authorized to update this post!", "error")
+                return redirect(url_for("home"))
+            form = PostForm()
+            if form.validate_on_submit():
+                tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
+                db.posts.update_one(
+                    {"_id": ObjectId(post_id)},
+                    {"$set": {"title": form.title.data, "content": form.content.data, "category": form.category.data, "tags": tags}}
+                )
+                flash("Your post has been updated!", "success")
+                return redirect(url_for("post", post_id=post_id))
+            elif request.method == "GET":
+                form.title.data = post["title"]
+                form.content.data = post["content"]
+                form.category.data = post["category"]
+                form.tags.data = ", ".join(post["tags"])
+            return render_template("create_post.html", title="Update Post", form=form, legend="Update Post")
+        else:
+            flash("Post not found!", "error")
+            return redirect(url_for("home"))
+    except:
+        flash("Invalid post ID!", "error")
+        return redirect(url_for("home"))
