@@ -160,3 +160,17 @@ def update_post(post_id):
     except:
         flash("Invalid post ID!", "error")
         return redirect(url_for("home"))
+    
+@app.route("/post/<post_id>/delete", methods=["POST"])
+@login_required
+def delete_post(post_id):
+    try:
+        post = db.posts.find_one({"_id": ObjectId(post_id)})
+        if post and post["user_id"] == current_user.id:
+            db.posts.delete_one({"_id": ObjectId(post_id)})
+            flash("Your post has been deleted!", "success")
+        else:
+            flash("You do not have permission to delete this post.", "error")
+    except:
+        flash("Invalid post ID!", "error")
+    return redirect(url_for("home"))
