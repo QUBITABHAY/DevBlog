@@ -2,7 +2,7 @@ import secrets
 from PIL import Image
 import os
 from flask import flash, redirect, render_template, url_for, request
-from basic_flask.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from basic_flask.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, DeletePostForm
 from basic_flask import app, db, bcrypt
 from basic_flask.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
@@ -121,15 +121,16 @@ def new_post():
 def post(post_id):
     try:
         post = db.posts.find_one({"_id": ObjectId(post_id)})
+        form = DeletePostForm()
         if post:
-            return render_template("post.html", title=post["title"], post=post)
+            return render_template("post.html", title=post["title"], post=post, form=form)
         else:
             flash("Post not found!", "error")
             return redirect(url_for("home"))
     except:
         flash("Invalid post ID!", "error")
         return redirect(url_for("home"))
-    
+
 @app.route("/post/<post_id>/update", methods=["GET", "POST"])
 @login_required
 def update_post(post_id):

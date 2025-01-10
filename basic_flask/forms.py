@@ -55,3 +55,6 @@ class PostForm(FlaskForm):
     category = StringField("Category", validators=[DataRequired()])
     tags = StringField("Tags", validators=[DataRequired()])
     submit = SubmitField("Post")
+
+class DeletePostForm(FlaskForm):
+    submit = SubmitField('Delete')

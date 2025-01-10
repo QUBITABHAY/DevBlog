@@ -32,41 +32,16 @@
 
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-8">
-      <!-- Flash Messages -->
-      <div class="mb-8">
-          {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                  {% for category, message in messages %}
-                      <div class="p-4 mb-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
-                          {{ message }}
-                      </div>
-                  {% endfor %}
-              {% endif %}
-          {% endwith %}
-      </div>
-
-      <!-- Content Block 
-      <div class="bg-white shadow-md rounded-lg p-6">
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="p-4 mb-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
-                  {{ message }}
-                </div>
-                {% endfor %}
-            {% endif %}
-          {% endwith %} -->
-          {% block content %}
-
-          {% endblock %}
-      </div>
+    {% block content %}{% endblock content %}
   </main>
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-white mt-12">
-      <div class="max-w-7xl mx-auto px-4 py-6">
-          <p class="text-center">© 2024 FlaskBlog. All rights reserved.</p>
-      </div>
-  </footer>
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <p class="text-center">© 2024 FlaskBlog. All rights reserved.</p>
+    </div>
+</footer>
 </body>
+<!-- Scripts -->
+{% block scripts %}{% endblock scripts %}
 </html>
