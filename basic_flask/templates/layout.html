@@ -7,40 +7,40 @@
   <title>{% if title %}Flask Blog - {{ title }}{% else %}Flask Blog{% endif %}</title>
 </head>
 <body class="bg-gray-100 min-h-screen">
-  <!-- Navigation -->
-  <nav class="bg-indigo-600 shadow-lg">
-      <div class="max-w-7xl mx-auto px-4">
-          <div class="flex justify-between items-center h-16">
-              <div class="flex items-center">
-                  <a href="{{ url_for('home') }}" class="text-white font-bold text-xl">FlaskBlog</a>
-              </div>
-              <div class="hidden md:flex items-center space-x-4">
-                <a href="{{ url_for('home') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Home</a>
-                <a href="{{ url_for('about') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">About</a>
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('new_post') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">New Post</a>
-                    <a href="{{ url_for('account') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Account</a>
-                    <a href="{{ url_for('logout') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('register') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Register</a>
-                    <a href="{{ url_for('login') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Login</a>
-                {% endif %}
-              </div>
-          </div>
-      </div>
-  </nav>
+    <!-- Navigation -->
+    <nav class="bg-indigo-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('home') }}" class="text-white font-bold text-xl">FlaskBlog</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{{ url_for('home') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Home</a>
+                    <a href="{{ url_for('about') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">About</a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('new_post') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">New Post</a>
+                        <a href="{{ url_for('account') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Account</a>
+                        <a href="{{ url_for('logout') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Register</a>
+                        <a href="{{ url_for('login') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-8">
-    {% block content %}{% endblock content %}
-  </main>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock content %}
+    </main>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white mt-12">
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <p class="text-center">© 2024 FlaskBlog. All rights reserved.</p>
-    </div>
-</footer>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <p class="text-center">© 2024 FlaskBlog. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 <!-- Scripts -->
 {% block scripts %}{% endblock scripts %}

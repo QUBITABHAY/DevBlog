@@ -12,7 +12,7 @@ from bson import ObjectId
 @app.route("/")
 @app.route("/home")
 def home():
-    posts = db.posts.find()
+    posts = db.posts.find().sort("date_posted", -1)
     return render_template("home.html", post=posts)
 
 @app.route("/about")
@@ -175,3 +175,13 @@ def delete_post(post_id):
     except:
         flash("Invalid post ID!", "error")
     return redirect(url_for("home"))
+
+@app.route("/user/<username>")
+def user_posts(username):
+    user_data = db.users.find_one({"username": username})
+    if user_data:
+        posts = db.posts.find({"user_id": str(user_data["_id"])}).sort("date_posted", -1)
+        return render_template("user_posts.html", posts=posts, user=user_data)
+    else:
+        flash("User not found!", "error")
+        return redirect(url_for("home"))

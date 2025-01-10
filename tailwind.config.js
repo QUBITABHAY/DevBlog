@@ -8,6 +8,7 @@ module.exports = {
     "basic_flask/templates/account.html",
     "basic_flask/templates/create_post.html",
     "basic_flask/templates/post.html",
+    "basic_flask/templates/user_post.html",
   ],
   theme: {
     extend: {},

@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
+    <h1 class="text-2xl font-semibold text-center">Posted By - {{ user.username }} ({{ posts.total }})</h1>
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for posts in post %}
@@ -28,7 +29,7 @@
                                 <img class="h-10 w-10 rounded-full bg-gray-200" src="https://ui-avatars.com/api/?name={{ posts.author }}" alt="{{ posts.author }}">
                             </div>
                             <div class="ml-3">
-                                <a href="{{ url_for('user_posts', username = posts.author.username) }}" class="text-sm font-medium text-gray-900">{{ posts.author }}</a>
+                                <a href="{{ url_for("user_posts", username = posts.author.username) }}" class="text-sm font-medium text-gray-900">{{ posts.author }}</a>
                                 <p class="text-sm text-gray-500">Author</p>
                             </div>
                         </div>
