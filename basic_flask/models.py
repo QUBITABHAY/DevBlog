@@ -1,7 +1,12 @@
 from datetime import datetime as dt
-from basic_flask import db, login_manager
+from basic_flask import db, login_manager, app
 from bson import ObjectId
 from flask_login import UserMixin
+from itsdangerous import URLSafeTimedSerializer as Serializer
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.from_db(db.users.find_one({"_id": ObjectId(user_id)}))
 
 class User(UserMixin):
     def __init__(self, user_data):
@@ -10,6 +15,19 @@ class User(UserMixin):
         self.email = user_data.get('email')
         self.password = user_data.get('password')
         self.image_file = user_data.get('image_file', 'default.jpg')
+    
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id}).encode('utf-8')
+    
+    @staticmethod
+    def verify_reset_token(token, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token, max_age=expires_sec)['user_id']
+        except:
+            return None
+        return User.from_db(db.users.find_one({'_id': ObjectId(user_id)}))
 
     @staticmethod
     def from_db(user_data):
@@ -18,58 +36,61 @@ class User(UserMixin):
         return User(user_data)
     
     def save(self):
-        # Create unique indexes
-        db.users.create_index([("username", 1)], unique=True)
-        db.users.create_index([("email", 1)], unique=True)
-        
-        user_data = {
-            "username": self.username,
-            "email": self.email,
-            "password": self.password,
-            "image_file": self.image_file
-        }
-        result = db.users.insert_one(user_data)
-        self.id = str(result.inserted_id)
-@login_manager.user_loader
-def load_user(user_id):
-    if not user_id:
-        return None
-    try:
-        user_data = db.users.find_one({"_id": ObjectId(user_id)})
-        return User.from_db(user_data)
-    except:
-        return None
-    
+        if self.id:
+            db.users.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$set': {
+                    'username': self.username,
+                    'email': self.email,
+                    'password': self.password,
+                    'image_file': self.image_file
+                }}
+            )
+        else:
+            result = db.users.insert_one({
+                'username': self.username,
+                'email': self.email,
+                'password': self.password,
+                'image_file': self.image_file
+            })
+            self.id = str(result.inserted_id)
 
 class Post:
-    def __init__(self, title, content, user_id, date_posted=None, _id=None):
-        self._id = _id if _id else ObjectId()
-        self.title = title
-        self.content = content
-        self.user_id = user_id
-        self.date_posted = date_posted or dt.utcnow()
-
+    def __init__(self, post_data):
+        self.id = str(post_data.get('_id')) if post_data else None
+        self.title = post_data.get('title')
+        self.content = post_data.get('content')
+        self.date_posted = post_data.get('date_posted', dt.utcnow())
+        self.user_id = str(post_data.get('user_id'))
+        self.category = post_data.get('category')
+        self.tags = post_data.get('tags', [])
+    
     @staticmethod
-    def from_db(data):
-        if not data:
+    def from_db(post_data):
+        if not post_data:
             return None
-        return Post(
-            title=data['title'],
-            content=data['content'],
-            user_id=data['user_id'],
-            date_posted=data['date_posted'],
-            _id=data.get('_id')
-        )
-
+        return Post(post_data)
+    
     def save(self):
-        # Create index for user_id for efficient querying
-        db.posts.create_index([("user_id", 1)])
-        
-        post_data = {
-            "_id": self._id,
-            "title": self.title,
-            "content": self.content,
-            "user_id": self.user_id,
-            "date_posted": self.date_posted
-        }
-        db.posts.insert_one(post_data)
+        if self.id:
+            db.posts.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$set': {
+                    'title': self.title,
+                    'content': self.content,
+                    'date_posted': self.date_posted,
+                    'user_id': ObjectId(self.user_id),
+                    'category': self.category,
+                    'tags': self.tags
+                }}
+            )
+        else:
+            result = db.posts.insert_one({
+                'title': self.title,
+                'content': self.content,
+                'date_posted': self.date_posted,
+                'user_id': ObjectId(self.user_id),
+                'category': self.category,
+                'tags': self.tags
+            })
+            self.id = str(result.inserted_id)

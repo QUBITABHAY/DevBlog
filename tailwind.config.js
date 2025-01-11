@@ -9,6 +9,8 @@ module.exports = {
     "basic_flask/templates/create_post.html",
     "basic_flask/templates/post.html",
     "basic_flask/templates/user_post.html",
+    "basic_flask/templates/reset_token.html",
+    "basic_flask/templates/reset_request.html",
   ],
   theme: {
     extend: {},
