@@ -1,5 +1,5 @@
 from datetime import datetime as dt
-from basic_flask import db, login_manager, app
+from Dev_BLOG import db, login_manager, app
 from bson import ObjectId
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer as Serializer

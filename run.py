@@ -1,4 +1,4 @@
-from basic_flask import app, mongo_client
+from Dev_BLOG import app, mongo_client
 
 if __name__ == "__main__":
     try:
