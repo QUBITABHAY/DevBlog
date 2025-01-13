@@ -2,46 +2,39 @@
 
 {% block content %}
     <div class="container mx-auto px-4">
-        {% if posts and posts|length > 0 %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for post in posts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for posts in post %}
                 <article class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <time class="text-sm text-gray-500">{{ post.date_posted.strftime('%Y-%m-%d') }}</time>
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{{ post.category }}</span>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <time class="text-sm text-gray-500">{{ posts.date_posted.strftime('%Y-%m-%d') }}</time>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{{ posts.category }}</span>
+                        </div>
+                                
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600">
+                            <a href="{{ url_for('posts.post', post_id=posts._id) }}">{{ posts.title }}</a>
+                        </h2>
+                                
+                        <p class="text-gray-600 mb-4">{{ posts.content }}</p>
+                                
+                        <div class="space-x-2 mb-4">
+                            {% for tag in posts.tags %}
+                            <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-sm">#{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                                
+                        <div class="flex items-center mt-6 pt-4 border-t">
+                            <div class="flex-shrink-0">
+                                <img class="h-10 w-10 rounded-full bg-gray-200" src="https://ui-avatars.com/api/?name={{ posts.author }}" alt="{{ posts.author }}">
                             </div>
-                                    
-                            <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600">
-                                <a href="{{ url_for('posts.post', post_id=post._id) }}">{{ post.title }}</a>
-                            </h2>
-                                    
-                            <p class="text-gray-600 mb-4">{{ post.content }}</p>
-                                    
-                            <div class="space-x-2 mb-4">
-                                {% for tag in post.tags %}
-                                    <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-sm">#{{ tag }}</span>
-                                {% endfor %}
-                            </div>
-                                    
-                            <div class="flex items-center mt-6 pt-4 border-t">
-                                <div class="flex-shrink-0">
-                                    <img class="h-10 w-10 rounded-full bg-gray-200" src="https://ui-avatars.com/api/?name={{ post.author }}" alt="{{ post.author }}">
-                                </div>
-                                <div class="ml-3">
-                                    <a href="{{ url_for('users.user_posts', username=post.author) }}" class="text-sm font-medium text-gray-900">{{ post.author }}</a>
-                                    <p class="text-sm text-gray-500">Author</p>
-                                </div>
+                            <div class="ml-3">
+                                <a href="{{ url_for('posts.user_posts', username = posts.author.username) }}" class="text-sm font-medium text-gray-900">{{ posts.author }}</a>
+                                <p class="text-sm text-gray-500">Author</p>
                             </div>
                         </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="text-center py-10">
-                <h2 class="text-2xl font-bold text-gray-900">No posts found</h2>
-                <p class="text-gray-600 mt-2">Be the first to create a post!</p>
-            </div>
-        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
     </div>
 {% endblock content %}
