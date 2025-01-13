@@ -21,6 +21,7 @@ db = mongo_client["flask_db"]
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 <<<<<<< HEAD:Dev_BLOG/__init__.py
+<<<<<<< HEAD:Dev_BLOG/__init__.py
 login_manager.login_view = "users.login"
 login_manager.login_message_category = "error"
 
@@ -38,6 +39,12 @@ from Dev_BLOG.main.routes import main
 app.register_blueprint(users)
 app.register_blueprint(user_posts)
 app.register_blueprint(main)
+=======
+login_manager.login_view = "login"
+login_manager.login_message_category = "error"
+
+from basic_flask import routes
+>>>>>>> parent of 79edb7f (add to change password feature):basic_flask/__init__.py
 =======
 login_manager.login_view = "login"
 login_manager.login_message_category = "error"
