@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from Dev_BLOG import db
 from Dev_BLOG.models import Post
-from Dev_BLOG.user_posts.forms import PostForm, DeletePostForm
+from Dev_BLOG.posts.forms import PostForm, DeletePostForm
 from flask_login import current_user, login_required
 from bson import ObjectId
+from datetime import datetime as dt
 
 
 posts = Blueprint('posts', __name__)
@@ -14,22 +15,20 @@ posts = Blueprint('posts', __name__)
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
-        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
         post_data = {
-            "_id": post._id,
-            "title": post.title,
-            "content": post.content,
-            "user_id": post.user_id,
+            "title": form.title.data,
+            "content": form.content.data,
+            "user_id": current_user.id,
             "author": current_user.username,
             "category": form.category.data,
-            "tags": tags,
-            "date_posted": post.date_posted
+            "tags": [tag.strip() for tag in form.tags.data.split(',') if tag],
+            "date_posted": dt.utcnow()
         }
-        db.posts.insert_one(post_data)
+        post = Post(post_data)
+        db.posts.insert_one(post.__dict__)
         flash("Your post has been created!", "success")
         return redirect(url_for("main.home"))
-    return render_template("create_post.html", title="New Post", form=form, legend="New Post")
+    return render_template("create_post.html", title="New Post", form=form)
 
 @posts.route("/post/<post_id>")
 def post(post_id):
