@@ -48,6 +48,7 @@ class UpdateAccountForm(FlaskForm):
                 if user:
                     raise ValidationError("Email already exists. Please choose a different one.")
                 
+<<<<<<< HEAD:Dev_BLOG/users/forms.py
                 
 class RequestResetForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -62,3 +63,15 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), Length(min=6), EqualTo("password")])
     submit = SubmitField("Reset Password")
+=======
+
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    tags = StringField("Tags", validators=[DataRequired()])
+    submit = SubmitField("Post")
+
+class DeletePostForm(FlaskForm):
+    submit = SubmitField('Delete')
+>>>>>>> parent of 79edb7f (add to change password feature):basic_flask/forms.py

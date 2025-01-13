@@ -1,11 +1,9 @@
-import os
 from flask import Flask
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from flask_login import LoginManager
-from flask_mail import Mail
 
 load_dotenv()
 
@@ -22,6 +20,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "5ae1861867c107ac09ba2d30d107
 db = mongo_client["flask_db"]
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+<<<<<<< HEAD:Dev_BLOG/__init__.py
 login_manager.login_view = "users.login"
 login_manager.login_message_category = "error"
 
@@ -39,3 +38,9 @@ from Dev_BLOG.main.routes import main
 app.register_blueprint(users)
 app.register_blueprint(user_posts)
 app.register_blueprint(main)
+=======
+login_manager.login_view = "login"
+login_manager.login_message_category = "error"
+
+from basic_flask import routes
+>>>>>>> parent of 79edb7f (add to change password feature):basic_flask/__init__.py
