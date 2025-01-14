@@ -1,14 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["basic_flask/templates/layout.html",
-    "basic_flask/templates/about.html",
-    "basic_flask/templates/home.html",
-    "basic_flask/templates/register.html",
-    "basic_flask/templates/login.html",
-    "basic_flask/templates/account.html",
-    "basic_flask/templates/create_post.html",
-    "basic_flask/templates/post.html",
-    "basic_flask/templates/user_post.html",
+  content: ["DEV_BLOG/templates/layout.html",
+    "DEV_BLOG/templates/about.html",
+    "DEV_BLOG/templates/home.html",
+    "DEV_BLOG/templates/register.html",
+    "DEV_BLOG/templates/login.html",
+    "DEV_BLOG/templates/account.html",
+    "DEV_BLOG/templates/create_post.html",
+    "DEV_BLOG/templates/post.html",
+    "DEV_BLOG/templates/user_post.html",
   ],
   theme: {
     extend: {},

@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from Dev_BLOG import db
+from DEV_BLOG import db
 from flask_login import current_user
 
 class RegistrationForm(FlaskForm):
@@ -48,9 +48,17 @@ class UpdateAccountForm(FlaskForm):
                 if user:
                     raise ValidationError("Email already exists. Please choose a different one.")
                 
-<<<<<<< HEAD:Dev_BLOG/users/forms.py
-<<<<<<< HEAD:Dev_BLOG/users/forms.py
-                
+
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    tags = StringField("Tags", validators=[DataRequired()])
+    submit = SubmitField("Post")
+
+class DeletePostForm(FlaskForm):
+    submit = SubmitField('Delete')
+    
 class RequestResetForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     submit = SubmitField("Request Password Reset")
@@ -64,21 +72,3 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), Length(min=6), EqualTo("password")])
     submit = SubmitField("Reset Password")
-=======
-=======
->>>>>>> parent of 79edb7f (add to change password feature):basic_flask/forms.py
-
-class PostForm(FlaskForm):
-    title = StringField("Title", validators=[DataRequired()])
-    content = TextAreaField("Content", validators=[DataRequired()])
-    category = StringField("Category", validators=[DataRequired()])
-    tags = StringField("Tags", validators=[DataRequired()])
-    submit = SubmitField("Post")
-
-class DeletePostForm(FlaskForm):
-<<<<<<< HEAD:Dev_BLOG/users/forms.py
-    submit = SubmitField('Delete')
->>>>>>> parent of 79edb7f (add to change password feature):basic_flask/forms.py
-=======
-    submit = SubmitField('Delete')
->>>>>>> parent of 79edb7f (add to change password feature):basic_flask/forms.py
