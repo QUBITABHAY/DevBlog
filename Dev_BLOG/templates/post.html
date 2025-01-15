@@ -13,7 +13,7 @@
                     {% if post.author == current_user.username %}
                     <div class="flex justify-end mb-4">
                         <a href="{{ url_for('update_post', post_id=post._id) }}" class="text-blue-600 hover:underline">Edit</a>
-                        <button type="button" class="text-red-600 hover:underline" onclick="toggleModal('deleteModal')">Delete</button>
+                        <button type="button" class="text-red-600 hover:underline ml-2" onclick="toggleModal('deleteModal')">Delete</button>
                     </div>
                     {% endif %}
 
@@ -52,7 +52,7 @@
                 <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition" onclick="toggleModal('deleteModal')">Cancel</button>
                 <form method="POST" action="{{ url_for('delete_post', post_id=post._id) }}" class="inline">
                     {{ form.hidden_tag() }}
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-red-600 rounded-md hover:bg-red-700 transition">Delete</button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Delete</button>
                 </form>
             </div>
         </div>

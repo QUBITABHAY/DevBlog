@@ -8,12 +8,16 @@ from DEV_BLOG.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from bson import ObjectId
 from flask_mail import Message
+import datetime as dt
 
 
 @app.route("/")
 @app.route("/home")
 def home():
-    posts = db.posts.find().sort("date_posted", -1)
+    posts = list(db.posts.find().sort("date_posted", -1))
+    # Convert ObjectId to string for each post
+    for post in posts:
+        post['_id'] = str(post['_id'])
     return render_template("home.html", post=posts)
 
 @app.route("/about")
@@ -102,18 +106,17 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
-        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
         post_data = {
-            "_id": post._id,
-            "title": post.title,
-            "content": post.content,
-            "user_id": post.user_id,
+            "title": form.title.data,
+            "content": form.content.data,
+            "user_id": current_user.id,
             "author": current_user.username,
             "category": form.category.data,
             "tags": tags,
-            "date_posted": post.date_posted
+            "date_posted": dt.utcnow()
         }
-        db.posts.insert_one(post_data)
+        result = db.posts.insert_one(post_data)
+        post_data['_id'] = str(result.inserted_id)  # Convert ObjectId to string
         flash("Your post has been created!", "success")
         return redirect(url_for("home"))
     return render_template("create_post.html", title="New Post", form=form, legend="New Post")
@@ -122,8 +125,9 @@ def new_post():
 def post(post_id):
     try:
         post = db.posts.find_one({"_id": ObjectId(post_id)})
-        form = DeletePostForm()
         if post:
+            post['_id'] = str(post['_id'])  # Convert ObjectId to string
+            form = DeletePostForm()
             return render_template("post.html", title=post["title"], post=post, form=form)
         else:
             flash("Post not found!", "error")
