@@ -30,17 +30,21 @@ def register():
         return redirect(url_for("home"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
-        user_data = {
-            'username': form.username.data,
-            'email': form.email.data,
-            'password': hashed_password,
-            'image_file': 'default.jpg'
-        }
-        new_user = User(user_data)
-        new_user.save()
-        flash("Your account has been created! You can now log in", "success")
-        return redirect(url_for("login"))
+        try:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+            user_data = {
+                '_id': ObjectId(),  # Generate new ObjectId explicitly
+                'username': form.username.data,
+                'email': form.email.data,
+                'password': hashed_password,
+                'image_file': 'default.jpg'
+            }
+            new_user = User(user_data)
+            new_user.save()
+            flash("Your account has been created! You can now log in", "success")
+            return redirect(url_for("users.login"))
+        except Exception as e:
+            flash(f"Error creating account: {str(e)}", "danger")
     return render_template("register.html", title="Register", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -106,17 +110,18 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
+        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
         post_data = {
-            "title": form.title.data,
-            "content": form.content.data,
-            "user_id": current_user.id,
+            "_id": post._id,
+            "title": post.title,
+            "content": post.content,
+            "user_id": post.user_id,
             "author": current_user.username,
             "category": form.category.data,
             "tags": tags,
-            "date_posted": dt.utcnow()
+            "date_posted": post.date_posted
         }
-        result = db.posts.insert_one(post_data)
-        post_data['_id'] = str(result.inserted_id)  # Convert ObjectId to string
+        db.posts.insert_one(post_data)
         flash("Your post has been created!", "success")
         return redirect(url_for("home"))
     return render_template("create_post.html", title="New Post", form=form, legend="New Post")
@@ -125,9 +130,8 @@ def new_post():
 def post(post_id):
     try:
         post = db.posts.find_one({"_id": ObjectId(post_id)})
+        form = DeletePostForm()
         if post:
-            post['_id'] = str(post['_id'])  # Convert ObjectId to string
-            form = DeletePostForm()
             return render_template("post.html", title=post["title"], post=post, form=form)
         else:
             flash("Post not found!", "error")
@@ -135,6 +139,7 @@ def post(post_id):
     except:
         flash("Invalid post ID!", "error")
         return redirect(url_for("home"))
+
 
 @app.route("/post/<post_id>/update", methods=["GET", "POST"])
 @login_required

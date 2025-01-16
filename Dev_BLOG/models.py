@@ -10,7 +10,7 @@ def load_user(user_id):
 
 class User(UserMixin):
     def __init__(self, user_data):
-        self.id = str(user_data.get('_id')) if user_data else None
+        self.id = str(user_data.get('_id', ObjectId()))
         self.username = user_data.get('username')
         self.email = user_data.get('email')
         self.password = user_data.get('password')
@@ -36,23 +36,20 @@ class User(UserMixin):
         return User(user_data)
     
     def save(self):
-        if self.id:
+        user_data = {
+            'username': self.username,
+            'email': self.email,
+            'password': self.password,
+            'image_file': self.image_file
+        }
+        
+        if hasattr(self, 'id') and self.id:
             db.users.update_one(
                 {'_id': ObjectId(self.id)},
-                {'$set': {
-                    'username': self.username,
-                    'email': self.email,
-                    'password': self.password,
-                    'image_file': self.image_file
-                }}
+                {'$set': user_data}
             )
         else:
-            result = db.users.insert_one({
-                'username': self.username,
-                'email': self.email,
-                'password': self.password,
-                'image_file': self.image_file
-            })
+            result = db.users.insert_one(user_data)
             self.id = str(result.inserted_id)
 
 class Post:
