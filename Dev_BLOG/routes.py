@@ -15,7 +15,6 @@ import datetime as dt
 @app.route("/home")
 def home():
     posts = list(db.posts.find().sort("date_posted", -1))
-    # Convert ObjectId to string for each post
     for post in posts:
         post['_id'] = str(post['_id'])
     return render_template("home.html", post=posts)
@@ -33,7 +32,7 @@ def register():
         try:
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
             user_data = {
-                '_id': ObjectId(),  # Generate new ObjectId explicitly
+                '_id': ObjectId(),
                 'username': form.username.data,
                 'email': form.email.data,
                 'password': hashed_password,
