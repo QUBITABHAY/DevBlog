@@ -6,28 +6,34 @@ from itsdangerous import URLSafeTimedSerializer as Serializer
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.from_db(db.users.find_one({"_id": ObjectId(user_id)}))
+    user_data = db.users.find_one({"_id": ObjectId(user_id)})
+    return User(user_data) if user_data else None
 
 class User(UserMixin):
     def __init__(self, user_data):
-        self.id = str(user_data.get('_id', ObjectId()))
-        self.username = user_data.get('username')
-        self.email = user_data.get('email')
-        self.password = user_data.get('password')
+        self.id = str(user_data['_id'])
+        self.username = user_data['username']
+        self.email = user_data['email']
+        self.password = user_data['password']
         self.image_file = user_data.get('image_file', 'default.jpg')
     
-    def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'])
-        return s.dumps({'user_id': self.id}).encode('utf-8')
+    def get_reset_token(self):
+        serializer = Serializer(app.config['SECRET_KEY'])
+        # Include both user_id and email in token
+        return serializer.dumps({'user_id': self.id, 'email': self.email})
     
     @staticmethod
     def verify_reset_token(token, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'])
+        serializer = Serializer(app.config['SECRET_KEY'])
         try:
-            user_id = s.loads(token, max_age=expires_sec)['user_id']
+            data = serializer.loads(token, max_age=expires_sec)
+            user_data = db.users.find_one({
+                '_id': ObjectId(data['user_id']),
+                'email': data['email']
+            })
+            return User(user_data) if user_data else None
         except:
             return None
-        return User.from_db(db.users.find_one({'_id': ObjectId(user_id)}))
 
     @staticmethod
     def from_db(user_data):

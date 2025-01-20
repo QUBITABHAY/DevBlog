@@ -62,7 +62,7 @@ class DeletePostForm(FlaskForm):
 class RequestResetForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     submit = SubmitField("Request Password Reset")
-    
+
     def validate_email(self, email):
         user = db.users.find_one({"email": email.data})
         if user is None:

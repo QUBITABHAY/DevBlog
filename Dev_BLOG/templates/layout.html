@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='output.css') }}">
-  <title>{% if title %}Flask Blog - {{ title }}{% else %}Flask Blog{% endif %}</title>
+  <title>{% if title %}DevBlog - {{ title }}{% else %}DevBlog{% endif %}</title>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- Navigation -->
@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="{{ url_for('home') }}" class="text-white font-bold text-xl">FlaskBlog</a>
+                    <a href="{{ url_for('home') }}" class="text-white font-bold text-xl">DevBlog</a>
                 </div>
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="{{ url_for('home') }}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md">Home</a>
@@ -38,7 +38,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-12">
         <div class="max-w-7xl mx-auto px-4 py-6">
-            <p class="text-center">© 2024 FlaskBlog. All rights reserved.</p>
+            <p class="text-center">© 2025 DevBlog. All rights reserved.</p>
         </div>
     </footer>
 </body>
