@@ -30,20 +30,41 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         try:
+            # Check if user already exists
+            existing_user = db.users.find_one({
+                "$or": [
+                    {"email": form.email.data},
+                    {"username": form.username.data}
+                ]
+            })
+            
+            if existing_user:
+                if existing_user.get('email') == form.email.data:
+                    flash("Email already registered. Please use a different email.", "danger")
+                else:
+                    flash("Username already taken. Please choose a different one.", "danger")
+                return render_template("register.html", title="Register", form=form)
+
+            # Create new user
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
             user_data = {
-                '_id': ObjectId(),
                 'username': form.username.data,
                 'email': form.email.data,
                 'password': hashed_password,
                 'image_file': 'default.jpg'
             }
-            new_user = User(user_data)
-            new_user.save()
-            flash("Your account has been created! You can now log in", "success")
-            return redirect(url_for("users.login"))
+            
+            # Insert the user directly into the database
+            result = db.users.insert_one(user_data)
+            if result.inserted_id:
+                flash("Your account has been created! You can now log in", "success")
+                return redirect(url_for("login"))
+            else:
+                flash("Error creating account. Please try again.", "danger")
+                
         except Exception as e:
             flash(f"Error creating account: {str(e)}", "danger")
+            
     return render_template("register.html", title="Register", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,15 +73,18 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user_data = db.users.find_one({"email": form.email.data})
-        if user_data and bcrypt.check_password_hash(user_data['password'], form.password.data):
-            user = User.from_db(user_data)
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            flash("Login successful!", "success")
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:
-            flash("Login unsuccessful. Please check email and password", "error")
+        try:
+            user_data = db.users.find_one({"email": form.email.data})
+            if user_data and bcrypt.check_password_hash(user_data['password'], form.password.data):
+                user = User(user_data)  # Create User instance with user_data
+                login_user(user, remember=form.remember.data)
+                next_page = request.args.get('next')
+                flash("Login successful!", "success")
+                return redirect(next_page) if next_page else redirect(url_for('home'))
+            else:
+                flash("Login unsuccessful. Please check email and password", "error")
+        except Exception as e:
+            flash(f"Login error: {str(e)}", "error")
     return render_template('login.html', title="Login", form=form)
 
 @app.route("/logout")
@@ -92,13 +116,28 @@ def account():
         current_user.email = form.email.data
         db.users.update_one(
             {"_id": ObjectId(current_user.id)},
-            {"$set": {"username": current_user.username, "email": current_user.email, "image_file": current_user.image_file}}
+            {"$set": {
+                "username": current_user.username,
+                "email": current_user.email,
+                "image_file": current_user.image_file
+            }}
         )
         flash("Your account has been updated!", "success")
         return redirect(url_for("account"))
     elif request.method == "GET":
         form.username.data = current_user.username
         form.email.data = current_user.email
+
+    # Get user stats
+    posts_count = db.posts.count_documents({"user_id": current_user.id})
+    recent_posts = list(db.posts.find(
+        {"user_id": current_user.id}
+    ).sort("date_posted", -1).limit(5))
+
+    # Convert ObjectId to string for each post
+    for post in recent_posts:
+        post['_id'] = str(post['_id'])
+
     image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
     return render_template("account.html", title = "Account", image_file=image_file, form=form)
 
@@ -109,18 +148,20 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         tags = [tag.strip() for tag in form.tags.data.split(',')] if form.tags.data else []
-        post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
         post_data = {
-            "_id": post._id,
-            "title": post.title,
-            "content": post.content,
-            "user_id": post.user_id,
+            "title": form.title.data,
+            "content": form.content.data,
+            "user_id": current_user.id,
             "author": current_user.username,
             "category": form.category.data,
             "tags": tags,
-            "date_posted": post.date_posted
+            "date_posted": dt.datetime.utcnow()
         }
-        db.posts.insert_one(post_data)
+        # Create post instance with the post_data dictionary
+        post = Post(post_data)
+        # Insert the post data directly into the database
+        result = db.posts.insert_one(post_data)
+        post_data['_id'] = str(result.inserted_id)
         flash("Your post has been created!", "success")
         return redirect(url_for("home"))
     return render_template("create_post.html", title="New Post", form=form, legend="New Post")

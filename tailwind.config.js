@@ -9,6 +9,9 @@ module.exports = {
     "DEV_BLOG/templates/create_post.html",
     "DEV_BLOG/templates/post.html",
     "DEV_BLOG/templates/user_post.html",
+    "DEV_BLOG/templates/reset_request.html",
+    "DEV_BLOG/templates/reset_token.html",
+
   ],
   theme: {
     extend: {},

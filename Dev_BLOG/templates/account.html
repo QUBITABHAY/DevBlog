@@ -1,89 +1,153 @@
 {% extends "layout.html" %}
+
 {% block content %}
-    <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
-        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-            <!-- Profile Card -->
-            <div class="bg-white rounded-xl shadow-2xl p-8 mb-12">
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
-                    <div class="relative group">
-                        <img class="h-12 max-h-2 max-w-2 rounded-full object-cover border-4 border-indigo-100 hover:border-indigo-400 transition-all duration-300 transform hover:scale-105" 
-                            src="{{ image_file }}" 
-                            alt="Profile Picture">
+<div class="max-w-4xl mx-auto p-6">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <!-- Account Info Section -->
+        <div class="p-8">
+            <!-- Profile Header -->
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8 mb-8">
+                <!-- Profile Picture with Hover Effect -->
+                <div class="flex-shrink-0 relative group cursor-pointer">
+                    <img class="w-36 h-36 rounded-full border-4 border-gray-100 shadow-md transition-all duration-300 transform group-hover:scale-105 group-hover:border-blue-200" 
+                         src="{{ image_file }}" 
+                         alt="Profile Picture">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="bg-black bg-opacity-60 text-white text-sm px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm">
+                            Change Photo
+                        </span>
                     </div>
-                    <div class="md:text-left space-y-4">
-                        <h1 class="text-3xl font-semibold text-gray-900">{{ current_user.username }}</h1>
-                        <p class="text-lg text-gray-600">{{ current_user.email }}</p>
+                </div>
+
+                <!-- User Info with Stats -->
+                <div class="flex-grow text-center md:text-left">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ current_user.username }}</h2>
+                    <p class="text-gray-600 mb-6">{{ current_user.email }}</p>
+                    <div class="flex justify-center md:justify-start space-x-8">
+                        <div class="text-center px-4 py-2 bg-gray-50 rounded-lg">
+                            <span class="block text-2xl font-bold text-gray-900">{{ posts_count if posts_count else 0 }}</span>
+                            <span class="text-sm font-medium text-gray-500">Posts</span>
+                        </div>
+                        <div class="text-center px-4 py-2 bg-gray-50 rounded-lg">
+                            <span class="block text-2xl font-bold text-gray-900">{{ join_date.strftime('%b %Y') if join_date else 'N/A' }}</span>
+                            <span class="text-sm font-medium text-gray-500">Joined</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-            <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-                <form method="POST" action="" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
-                    <fieldset class="space-y-6">
-                        <legend class="text-2xl font-semibold text-center">Account Info</legend>
-                        
+            <!-- Update Form -->
+            <form method="POST" action="" enctype="multipart/form-data" class="mt-12 space-y-8">
+                {{ form.hidden_tag() }}
+                
+                <!-- Form Sections -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
                         <!-- Username Field -->
-                        <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700">{{ form.username.label }}</label>
+                        <div class="group">
+                            {{ form.username.label(class="block text-sm font-medium text-gray-700 mb-1") }}
                             {% if form.username.errors %}
-                                <div class="mt-1">
-                                    {{ form.username(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
-                                </div>
+                                {{ form.username(class="mt-1 block w-full px-4 py-3 border border-red-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-colors duration-200") }}
                                 <div class="mt-2 text-sm text-red-600">
                                     {% for error in form.username.errors %}
-                                        <p class="text-red-600">{{ error }}</p>
+                                        <p>{{ error }}</p>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                <div class="mt-1">
-                                    {{ form.username(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
-                                </div>
+                                {{ form.username(class="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors duration-200") }}
                             {% endif %}
                         </div>
-        
+
                         <!-- Email Field -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
+                        <div class="group">
+                            {{ form.email.label(class="block text-sm font-medium text-gray-700 mb-1") }}
                             {% if form.email.errors %}
-                                <div class="mt-1">
-                                    {{ form.email(class="block w-full px-4 py-2 mt-1 text-gray-700 border border-red-500 rounded-md focus:ring-red-500 focus:border-red-500") }}
-                                </div>
+                                {{ form.email(class="mt-1 block w-full px-4 py-3 border border-red-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-colors duration-200") }}
                                 <div class="mt-2 text-sm text-red-600">
                                     {% for error in form.email.errors %}
-                                        <p class="text-red-600">{{ error }}</p>
+                                        <p>{{ error }}</p>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                <div class="mt-1">
-                                    {{ form.email(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
-                                </div>
+                                {{ form.email(class="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors duration-200") }}
                             {% endif %}
                         </div>
-                        <!-- Picture Field -->
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Picture Upload with Preview -->
                         <div>
-                            <label for="picture" class="block text-sm font-medium text-gray-700">{{ form.picture.label() }}</label>
+                            {{ form.picture.label(class="block text-sm font-medium text-gray-700 mb-2") }}
                             <div class="mt-1">
-                                {{ form.picture(class="block w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500") }}
+                                {{ form.picture(class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors duration-200") }}
                             </div>
                             {% if form.picture.errors %}
-                                {% for error in form.picture.errors %}
-                                    <div class="mt-2 text-sm text-red-600">{{ error }}</div>
-                                {% endfor %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.picture.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
                             {% endif %}
+                            <p class="mt-2 text-sm text-gray-500">Recommended: Square image, max 5MB</p>
                         </div>
-                    </fieldset>
-        
-                    <div class="mt-6">
-                        <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                            {{ form.submit() }}
-                        </button>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end pt-6 border-t border-gray-100">
+                    {{ form.submit(class="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md") }}
+                </div>
+            </form>
         </div>
     </div>
-    
+
+    <!-- Recent Activity Section -->
+    <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
+            {% if recent_posts %}
+                <div class="space-y-4">
+                    {% for post in recent_posts %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-1">{{ post.title }}</h4>
+                            <p class="text-sm text-gray-500">Posted on {{ post.date_posted.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                        <a href="{{ url_for('post', post_id=post._id) }}" 
+                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                            View Post
+                            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8 bg-gray-50 rounded-lg">
+                    <p class="text-gray-500">No recent activity</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Preview Image Script -->
+<script>
+    document.getElementById('picture').onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profileImage = document.querySelector('img[alt="Profile Picture"]');
+                if (profileImage) {
+                    profileImage.src = e.target.result;
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 {% endblock content %}
