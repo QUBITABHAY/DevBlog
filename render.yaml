@@ -3,7 +3,7 @@ services:
     name: devblog
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: MONGO_USER
         sync: false
@@ -14,9 +14,4 @@ services:
       - key: EMAIL_PASS
         sync: false
       - key: SECRET_KEY
-        generateValue: true
-    buildFilter:
-      paths:
-        - requirements.txt
-        - DEV_BLOG/**
-        - app.py 
+        generateValue: true 
