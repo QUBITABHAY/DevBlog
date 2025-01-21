@@ -2,7 +2,9 @@ services:
   - type: web
     name: devblog
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      pip install -e .
     startCommand: gunicorn run:app
     envVars:
       - key: MONGO_USER
@@ -19,4 +21,5 @@ services:
       paths:
         - requirements.txt
         - DEV_BLOG/**
-        - run.py 
+        - run.py
+        - setup.py 

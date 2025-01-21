@@ -1,0 +1,4 @@
+include DEV_BLOG/static/*
+include DEV_BLOG/templates/*
+recursive-include DEV_BLOG/static *
+recursive-include DEV_BLOG/templates * 
