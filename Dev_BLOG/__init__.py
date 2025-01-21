@@ -3,6 +3,7 @@ from flask import Flask
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_bcrypt import Bcrypt
+import os
 from dotenv import load_dotenv
 from flask_login import LoginManager
 from flask_mail import Mail

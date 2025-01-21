@@ -13,5 +13,3 @@ build/
 venv/
 env/
 ENV/
-DEV_BLOG/static/profile_pics/*
-!DEV_BLOG/static/profile_pics/default.jpg
