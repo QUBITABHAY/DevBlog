@@ -1,3 +1,9 @@
 .vscode/
-.DS_Store
+.idea/
+venv/
+env/
+ENV/
+DEV_BLOG/static/profile_pics/*
+!DEV_BLOG/static/profile_pics/default.jpg
+DEV_BLOG.egg-info/
 .env

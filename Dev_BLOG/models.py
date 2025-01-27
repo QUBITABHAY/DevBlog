@@ -16,6 +16,7 @@ class User(UserMixin):
         self.email = user_data['email']
         self.password = user_data['password']
         self.image_file = user_data.get('image_file', 'default.jpg')
+        self.join_date = user_data.get('join_date', dt.utcnow())
     
     def get_reset_token(self):
         serializer = Serializer(app.config['SECRET_KEY'])

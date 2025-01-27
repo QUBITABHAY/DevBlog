@@ -30,7 +30,7 @@
                             <span class="text-sm font-medium text-gray-500">Posts</span>
                         </div>
                         <div class="text-center px-4 py-2 bg-gray-50 rounded-lg">
-                            <span class="block text-2xl font-bold text-gray-900">{{ join_date.strftime('%b %Y') if join_date else 'N/A' }}</span>
+                            <span class="block text-2xl font-bold text-gray-900">{{ current_user.join_date.strftime('%b %Y') if current_user.join_date else 'N/A' }}</span>
                             <span class="text-sm font-medium text-gray-500">Joined</span>
                         </div>
                     </div>
@@ -108,9 +108,9 @@
     <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
         <div class="p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
-            {% if recent_posts %}
+            {% if current_user.post %}
                 <div class="space-y-4">
-                    {% for post in recent_posts %}
+                    {% for post in current_user.post %}
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                         <div>
                             <h4 class="font-medium text-gray-900 mb-1">{{ post.title }}</h4>

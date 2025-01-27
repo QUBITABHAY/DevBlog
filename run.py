@@ -1,12 +1,4 @@
-from DEV_BLOG import app, mongo_client
+from DEV_BLOG import app
 
 if __name__ == "__main__":
-    try:
-        # Test MongoDB connection
-        mongo_client.admin.command('ping')
-        print("MongoDB connection successful!")
-        
-        # Run Flask app
-        app.run(debug=True)
-    except Exception as e:
-        print(f"MongoDB connection failed: {e}")
+    app.run(host='0.0.0.0', port=10000, debug=True)
