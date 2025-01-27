@@ -1,3 +1,13 @@
+.env
+__pycache__/
+*.pyc
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
 .vscode/
 .idea/
 venv/
@@ -6,4 +16,3 @@ ENV/
 DEV_BLOG/static/profile_pics/*
 !DEV_BLOG/static/profile_pics/default.jpg
 DEV_BLOG.egg-info/
-.env
