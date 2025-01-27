@@ -50,7 +50,8 @@ def register():
                 'username': form.username.data,
                 'email': form.email.data,
                 'password': hashed_password,
-                'image_file': 'default.jpg'
+                'image_file': 'default.jpg',
+                'join_date': dt.datetime.utcnow()
             }
             
             result = db.users.insert_one(user_data)
