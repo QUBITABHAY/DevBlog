@@ -229,21 +229,14 @@ def update_post(post_id):
 def delete_post(post_id):
     try:
         post = db.posts.find_one({"_id": ObjectId(post_id)})
-        if not post:
-            flash("Post not found!", "error")
-            return redirect(url_for("home"))
-            
-        if post["user_id"] != current_user.id:
+        if post and post["user_id"] == current_user.id:
+            db.posts.delete_one({"_id": ObjectId(post_id)})
+            flash("Your post has been deleted!", "success")
+        else:
             flash("You do not have permission to delete this post.", "error")
-            return redirect(url_for("home"))
-            
-        db.posts.delete_one({"_id": ObjectId(post_id)})
-        flash("Your post has been deleted!", "success")
-        return redirect(url_for("home"))
-        
-    except Exception as e:
+    except:
         flash("Invalid post ID!", "error")
-        return redirect(url_for("home"))
+    return redirect(url_for("home"))
 
 @app.route("/user/<username>")
 def user_posts(username):
