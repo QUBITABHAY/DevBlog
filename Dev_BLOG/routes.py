@@ -9,7 +9,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from bson import ObjectId
 from flask_mail import Message
 import datetime as dt
-from werkzeug.utils import secure_filename
 
 @app.route("/")
 @app.route("/home")
@@ -96,15 +95,32 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-    
-    # Create directory if it doesn't exist
-    os.makedirs(os.path.dirname(picture_path), exist_ok=True)
-    
-    # Save picture
+
     output_size = (400, 400)
+
     i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
+
+    if i.mode in ('RGBA', 'P'):
+        i = i.convert('RGB')
+    
+    width, height = i.size
+    if width > height:
+        delta = width - height
+        left = int(delta/2)
+        right = width - int(delta/2)
+        top = 0
+        bottom = height
+    else:
+        delta = height - width
+        left = 0
+        right = width
+        top = int(delta/2)
+        bottom = height - int(delta/2)
+    
+    i = i.crop((left, top, right, bottom))
+    i.thumbnail(output_size, Image.Resampling.LANCZOS)
+    
+    i.save(picture_path, quality=85, optimize=True)
     
     return picture_fn
 
@@ -251,23 +267,23 @@ def user_posts(username):
 
 def send_reset_email(user):
     token = user.get_reset_token()
-    try:
-        msg = Message('Password Reset Request',
-                    sender=app.config['MAIL_USERNAME'],
-                    recipients=[user.email])
-        
-        reset_url = url_for('reset_token', token=token, _external=True)
-        msg.body = f'''To reset your password, visit the following link:
+    msg = Message('Password Reset Request',
+                  sender=app.config['MAIL_DEFAULT_SENDER'],
+                  recipients=[user.email])
+    reset_url = url_for('reset_token', token=token, _external=True)
+    msg.body = f'''To reset your password, visit the following link:
 {reset_url}
 
 If you did not make this request then simply ignore this email and no changes will be made.
 
 This link will expire in 30 minutes.
 '''
+    try:
         mail.send(msg)
+        print(f"Reset URL: {reset_url}")  # For debugging
         return True
-        
     except Exception as e:
+        print(f"Email error: {str(e)}")
         return False
 
 @app.route("/reset_password", methods=['GET', 'POST'])
